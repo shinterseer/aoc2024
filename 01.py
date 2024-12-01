@@ -29,15 +29,13 @@ def part1_script(input_file):
 
 def part2_script(input_file):
     numbers1, numbers2 = get_input(input_file)
-    result = 0
-    for i in range(len(numbers1)):
-        result += numbers1[i] * numbers2.count(numbers1[i])
+    result = sum([numbers1[i] * numbers2.count(numbers1[i]) for i in range(len(numbers2))])
     return result
 
 
 if __name__ == '__main__':
     unittest.main(exit=False)
 
-    filename = '01_input1.txt'
-    print(f'result 1: {part1_script(filename)}')
-    print(f'result 2: {part2_script(filename)}')
+    filename_global = '01_input1.txt'
+    print(f'result 1: {part1_script(filename_global)}')
+    print(f'result 2: {part2_script(filename_global)}')
