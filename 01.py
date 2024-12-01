@@ -1,3 +1,16 @@
+import unittest
+
+
+class TestExample(unittest.TestCase):
+    filename = '01_testinput.txt'
+
+    def test_part1(self):
+        self.assertEqual(11, part1_script(self.filename))
+
+    def test_part2(self):
+        self.assertEqual(31, part2_script(self.filename))
+
+
 def get_input(filename):
     with open(filename) as file:
         lines = [line.rstrip() for line in file]
@@ -6,21 +19,25 @@ def get_input(filename):
     return numbers1, numbers2
 
 
-def main_script1():
-    numbers1, numbers2 = get_input('01_input1.txt')
+def part1_script(input_file):
+    numbers1, numbers2 = get_input(input_file)
+    numbers1.sort()
+    numbers2.sort()
     result = sum([abs(numbers2[i] - numbers1[i]) for i in range(len(numbers2))])
-    print(f'result 1: {result}')
+    return result
 
 
-def main_script2():
-    numbers1, numbers2 = get_input('01_input1.txt')
+def part2_script(input_file):
+    numbers1, numbers2 = get_input(input_file)
     result = 0
     for i in range(len(numbers1)):
         result += numbers1[i] * numbers2.count(numbers1[i])
-    print(f'result 2: {result}')
-    print()
+    return result
 
 
 if __name__ == '__main__':
-    main_script1()
-    main_script2()
+    unittest.main(exit=False)
+
+    filename = '01_input1.txt'
+    print(f'result 1: {part1_script(filename)}')
+    print(f'result 2: {part2_script(filename)}')
