@@ -26,7 +26,17 @@ def get_input(filename):
 def turn_right(direction):
     return np.array([[0, 1], [-1, 0]]).dot(direction)
 
-def move_guard(pos, direction, chars):
+def move_guard(pos, text_direction, chars):
+    direction = None
+    if text_direction == 'up':
+        direction = np.array([-1, 0])
+    if text_direction == 'down':
+        direction = np.array([1, 0])
+    if text_direction == 'left':
+        direction = np.array([0, -1])
+    if text_direction == 'right':
+        direction = np.array([0, 1])
+
     new_pos = pos + direction
     if new_pos[0] < 0 or new_pos[0] >= chars.shape[0]:
         return np.array([-1, -1]), direction
@@ -43,7 +53,8 @@ def part1_script(input_file):
     chars, pos = get_input(input_file)
     chars[pos[0], pos[1]] = 'X'
     # pos_list = [pos]
-    direction = np.array([-1, 0])
+    direction = 'up'
+    # direction = np.array([-1, 0])
     in_map = True
     while in_map:
         pos, direction = move_guard(pos, direction, chars)
@@ -56,6 +67,36 @@ def part1_script(input_file):
 
 
 def part2_script(input_file):
+    chars, pos = get_input(input_file)
+    chars[pos[0], pos[1]] = 'X'
+    walked_directions_dict = {
+        'up': list(),
+        'down': list(),
+        'left': list(),
+        'right': list(),
+    }
+    # pos_list = [pos]
+    direction = np.array([-1, 0])
+
+    in_map = True
+    # while in_map:
+    #     if direction == np.array([-1, 0]):
+    #         walked_directions_dict['up'].append(pos)
+    #     if direction == np.array([1, 0]):
+    #         walked_directions_dict['down'].append(pos)
+    #     if direction == np.array([0, -1]):
+    #         walked_directions_dict['left'].append(pos)
+    #     if direction == np.array([0, 1]):
+    #         walked_directions_dict['right'].append(pos)
+    #
+    #     pos, direction = move_guard(pos, direction, chars)
+    #     if pos[0] == -1:
+    #         in_map = False
+    #     else:
+    #         chars[pos[0], pos[1]] = 'X'
+
+
+
     result = 0
     return result
 
