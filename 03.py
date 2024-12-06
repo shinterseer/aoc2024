@@ -32,12 +32,14 @@ def process_string(input_string):
 
 def part1_script(input_file):
     input_string = get_input(input_file)
-    return process_string(input_string)
+    result = process_string(input_string)
+    return result
 
 
 def part2_script(input_file):
     input_string = get_input(input_file)
     input_string = 'do()' + input_string
+
     current_string = input_string
     result = 0
     while len(current_string) > 1:
