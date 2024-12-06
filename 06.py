@@ -23,7 +23,7 @@ def get_input(filename):
                 pos = np.array([i, j])
     return chars, pos
 
-
+ 
 def turn_right(direction):
     return np.array([[0, 1], [-1, 0]]).dot(direction)
 
