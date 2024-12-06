@@ -35,19 +35,24 @@ def move_guard(pos, direction, chars):
         2: np.array([1, 0]),  # down
         3: np.array([0, -1])  # left
     }
-    dir_vector = direction_to_vector[direction]
-    new_pos = pos + dir_vector
-    if new_pos[0] < 0 or new_pos[0] >= chars.shape[0]:
-        return np.array([-1, -1]), direction
-    if new_pos[1] < 0 or new_pos[1] >= chars.shape[1]:
-        return np.array([-1, -1]), direction
-
-    new_direction = direction
-    if chars[new_pos[0], new_pos[1]] == '#':
-        new_direction = (direction + 1) % 4
-        dir_vector = direction_to_vector[new_direction]
+    valid_move = False
+    while not valid_move:
+        dir_vector = direction_to_vector[direction]
         new_pos = pos + dir_vector
-    return new_pos, new_direction
+
+        if new_pos[0] < 0 or new_pos[0] >= chars.shape[0]:
+            return np.array([-1, -1]), direction
+        if new_pos[1] < 0 or new_pos[1] >= chars.shape[1]:
+            return np.array([-1, -1]), direction
+
+        if chars[new_pos[0], new_pos[1]] != '#':
+            valid_move = True
+            new_pos = pos + dir_vector
+            break
+        else:
+            direction = (direction + 1) % 4
+
+    return new_pos, direction
 
 
 def part1_script(input_file):
@@ -72,28 +77,24 @@ def guard_trip(chars, pos):
         2: chars.copy(),  # down
         3: chars.copy()  # left
     }
-    chars[pos[0], pos[1]] = 'X'
 
     direction = 0
-
     chars[pos[0], pos[1]] = 'X'
 
-    # in_map = True
     leave = False
     loop = False
     while not leave:
-        directions_dict[direction][pos[0], pos[1]] = 'X'
+        old_pos = pos.copy()
         pos, direction = move_guard(pos, direction, chars)
         # directions_dict[direction][pos[0], pos[1]] = 'X'
-        if directions_dict[direction][pos[0], pos[1]] == 'X': # were in a loop
+        if directions_dict[direction][old_pos[0], old_pos[1]] == 'X': # were in a loop
             loop = True
             break
 
-        # directions_dict[direction][pos[0], pos[1]] = 'X'
         if pos[0] == -1:
-            # in_map = False
             leave = True
             break
+        directions_dict[direction][old_pos[0], old_pos[1]] = 'X'
         chars[pos[0], pos[1]] = 'X'
 
     return chars, leave, loop
@@ -101,21 +102,21 @@ def guard_trip(chars, pos):
 
 def part2_script(input_file):
     chars_original, pos = get_input(input_file)
-    x=0
     leave_list = list()
     loop_list = list()
     chars = chars_original.copy()
-    print(f'total workload: {chars.shape[0] * chars.shape[1]}')
-    for i, j in np.ndindex(chars.shape):
-        if i + j % 100 == 0:
-            print(f'tested {i + j}')
-        chars = chars_original.copy()
-        chars[i, j] = '#'
-        chars_mod, leave, loop = guard_trip(chars.copy(), pos)
-        if leave:
-            leave_list.append((i, j))
-        if loop:
-            loop_list.append((i, j))
+    print(f'total rows: {chars.shape[0]}')
+    for i in range(chars.shape[0]):
+        print(f'i: {i}, loops: {len(loop_list)}', flush=True)
+        for j in range(chars.shape[1]):
+
+            chars = chars_original.copy()
+            chars[i, j] = '#'
+            chars_mod, leave, loop = guard_trip(chars.copy(), pos)
+            if leave:
+                leave_list.append((i, j))
+            if loop:
+                loop_list.append((i, j))
 
     result = len(loop_list)
     return result
@@ -124,8 +125,7 @@ def part2_script(input_file):
 if __name__ == '__main__':
     unittest.main(exit=False)
 
-    # filename_global = '06_input.txt'
-    filename_global = '06_testinput.txt'
+    filename_global = '06_input.txt'
     result1 = part1_script(filename_global)
     print(f'result 1: {result1}')
     result2 = part2_script(filename_global)
