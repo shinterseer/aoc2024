@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import time
 
 
 class TestExample(unittest.TestCase):
@@ -23,10 +24,6 @@ def get_input(filename):
                 pos = np.array([i, j])
     return chars, pos
 
- 
-def turn_right(direction):
-    return np.array([[0, 1], [-1, 0]]).dot(direction)
-
 
 def move_guard(pos, direction, chars):
     direction_to_vector = {
@@ -35,8 +32,7 @@ def move_guard(pos, direction, chars):
         2: np.array([1, 0]),  # down
         3: np.array([0, -1])  # left
     }
-    valid_move = False
-    while not valid_move:
+    while True:
         dir_vector = direction_to_vector[direction]
         new_pos = pos + dir_vector
 
@@ -46,28 +42,10 @@ def move_guard(pos, direction, chars):
             return np.array([-1, -1]), direction
 
         if chars[new_pos[0], new_pos[1]] != '#':
-            valid_move = True
             new_pos = pos + dir_vector
-            break
+            return new_pos, direction
         else:
             direction = (direction + 1) % 4
-
-    return new_pos, direction
-
-
-def part1_script(input_file):
-    chars, pos = get_input(input_file)
-    chars[pos[0], pos[1]] = 'X'
-    direction = 0
-    in_map = True
-    while in_map:
-        pos, direction = move_guard(pos, direction, chars)
-        if pos[0] == -1:
-            in_map = False
-        else:
-            chars[pos[0], pos[1]] = 'X'
-    result = len([1 for iy, ix in np.ndindex(chars.shape) if chars[iy, ix] == 'X'])
-    return result
 
 
 def guard_trip(chars, pos):
@@ -87,7 +65,7 @@ def guard_trip(chars, pos):
         old_pos = pos.copy()
         pos, direction = move_guard(pos, direction, chars)
         # directions_dict[direction][pos[0], pos[1]] = 'X'
-        if directions_dict[direction][old_pos[0], old_pos[1]] == 'X': # were in a loop
+        if directions_dict[direction][old_pos[0], old_pos[1]] == 'X':  # were in a loop
             loop = True
             break
 
@@ -100,16 +78,23 @@ def guard_trip(chars, pos):
     return chars, leave, loop
 
 
+def part1_script(input_file):
+    chars, pos = get_input(input_file)
+    chars, leave, loop = guard_trip(chars, pos)
+    result = len([1 for iy, ix in np.ndindex(chars.shape) if chars[iy, ix] == 'X'])
+    return result
+
+
 def part2_script(input_file):
     chars_original, pos = get_input(input_file)
     leave_list = list()
     loop_list = list()
     chars = chars_original.copy()
+    start_time = time.time()
     print(f'total rows: {chars.shape[0]}')
     for i in range(chars.shape[0]):
-        print(f'i: {i}, loops: {len(loop_list)}', flush=True)
+        print(f'row: {i}, loops found: {len(loop_list)}', flush=True)
         for j in range(chars.shape[1]):
-
             chars = chars_original.copy()
             chars[i, j] = '#'
             chars_mod, leave, loop = guard_trip(chars.copy(), pos)
@@ -117,7 +102,7 @@ def part2_script(input_file):
                 leave_list.append((i, j))
             if loop:
                 loop_list.append((i, j))
-
+    print(f'total time for part 2 in s: {time.time() - start_time:.2f}')
     result = len(loop_list)
     return result
 
