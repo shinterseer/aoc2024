@@ -10,7 +10,7 @@ class TestExample(unittest.TestCase):
         self.assertEqual(14, part1_script(self.filename))
 
     def test_part2(self):
-        self.assertEqual(0, part2_script(self.filename))
+        self.assertEqual(34, part2_script(self.filename))
 
 
 def get_input(filename):
@@ -42,7 +42,25 @@ def part1_script(input_file):
 
 
 def part2_script(input_file):
-    return 0
+    chars = get_input(input_file)
+    anti_nodes = np.zeros(chars.shape)
+    for i in range(chars.shape[0]):
+        for j in range(chars.shape[1]):
+            frequency = -1
+            if chars[i, j] != '.':
+                frequency = chars[i, j]
+                for k in range(chars.shape[0]):
+                    for l in range(chars.shape[1]):
+                        if chars[k][l] == frequency and (i != k or j != l):
+                            m = 0
+                            while k + m * (k - i) in range(chars.shape[0]) and l + m * (l - j) in range(chars.shape[1]):
+                                anti_nodes[k + m * (k - i)][l + m * (l - j)] = 1
+                                m += 1
+                            m = 0
+                            while i - m * (i - k) in range(chars.shape[0]) and j - m * (j - l) in range(chars.shape[1]):
+                                anti_nodes[i - m * (i - k)][j - m * (j - l)] = 1
+                                m += 1
+    return anti_nodes.sum()
 
 
 if __name__ == '__main__':
